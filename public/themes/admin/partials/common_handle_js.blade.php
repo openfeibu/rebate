@@ -1,4 +1,7 @@
 <script>
+    if(typeof id=="undefined"){
+        var id = 'id'
+    }
     layui.use(['jquery','element','table'], function() {
         var table = layui.table;
         var form = layui.form;
@@ -8,13 +11,13 @@
             var data = obj.data;
             data['_token'] = "{!! csrf_token() !!}";
             if(obj.event === 'detail'){
-                layer.msg('ID：'+ data.id + ' 的查看操作');
+                layer.msg('ID：'+ data[id] + ' 的查看操作');
             } else if(obj.event === 'del'){
                 layer.confirm('真的删除行么', function(index){
                     layer.close(index);
                     var load = layer.load();
                     $.ajax({
-                        url : main_url+'/'+data.id,
+                        url : main_url+'/'+data[id],
                         data : data,
                         type : 'delete',
                         success : function (data) {
@@ -28,8 +31,8 @@
                     });
                 });
             } else if(obj.event === 'edit'){
-                // console.log(data.id)
-                window.location.href=main_url+'/'+data.id
+                // console.log(data[id])
+                window.location.href=main_url+'/'+data[id]
                 // layer.alert('编辑行：<br>'+ JSON.stringify(data))
             }
         });
@@ -44,7 +47,7 @@
             // 加载样式
             var load = layer.load();
             $.ajax({
-                url : main_url+'/'+data.id,
+                url : main_url+'/'+data[id],
                 data : ajax_data,
                 type : 'PUT',
                 success : function (data) {

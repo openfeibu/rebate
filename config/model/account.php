@@ -53,7 +53,7 @@ return [
             'guarded'       => ['*'],
             'slugs'         => [],
             'appends'       => [],
-            'fillable'      => ['VipID','UserID','UpgradeType','UpgradeDate','DetailID'],
+            'fillable'      => ['VipID','UserID','UpgradeType','UpgradeDate','Price'],
             'translate'     => [],
             'upload_folder' => 'user/user',
             'uploads'       => [
@@ -144,6 +144,72 @@ return [
             'slugs'         => [],
             'appends'       => [],
             'fillable'      => [],
+            'translate'     => [],
+            'upload_folder' => 'user/user',
+            'uploads'       => [
+                'photo' => [
+                    'count' => 1,
+                    'type'  => 'image',
+                ],
+            ],
+            'casts'         => [
+                'permissions' => 'array',
+                'photo'       => 'array',
+                'dob'         => 'date',
+            ],
+            'revision'      => [],
+            'perPage'       => '20',
+            'search'        => [
+
+            ],
+        ],
+
+    ],
+    't_off_line_order'  => [
+        'model' => [
+            'model'         => \App\Models\TOffLineOrder::class,
+            'table'         => 'T_OffLineOrder',
+            'primaryKey'    => 'ID',
+            //'presenter'     => \Litepie\User\Repositories\Presenter\UserPresenter::class,
+            'hidden'        => [],
+            'visible'       => [],
+            'guarded'       => ['*'],
+            'slugs'         => [],
+            'appends'       => [],
+            'fillable'      => [],
+            'translate'     => [],
+            'upload_folder' => 'user/user',
+            'uploads'       => [
+                'photo' => [
+                    'count' => 1,
+                    'type'  => 'image',
+                ],
+            ],
+            'casts'         => [
+                'permissions' => 'array',
+                'photo'       => 'array',
+                'dob'         => 'date',
+            ],
+            'revision'      => [],
+            'perPage'       => '20',
+            'search'        => [
+
+            ],
+        ],
+
+    ],
+    'vip_rebate'  => [
+        'model' => [
+            'model'         => \App\Models\VipRebate::class,
+            'table'         => 'VipRebates',
+            'primaryKey'    => 'VipRebateID',
+            //'presenter'     => \Litepie\User\Repositories\Presenter\UserPresenter::class,
+            'hidden'        => [],
+            'visible'       => [],
+            'guarded'       => ['*'],
+            'slugs'         => [],
+            'appends'       => [],
+            'fillable'      => ['VipID','Rank','Ratio'],
             'translate'     => [],
             'upload_folder' => 'user/user',
             'uploads'       => [

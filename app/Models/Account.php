@@ -34,6 +34,11 @@ class Account extends User
     {
         return AccountVip::where('UserID',Auth::user()->UserID)->join('Vips','Vips.VipID','=','AccountsVips.VipId')->orderBy('AccountsVips.VipID','desc')->first();
     }
+    public function userVipPriceTotal()
+    {
+        return AccountVip::where('UserID',Auth::user()->UserID)->join('Vips','Vips.VipID','=','AccountsVips.VipId')->sum('AccountsVips.Price');
+    }
+
     public function vip($UserID)
     {
         return AccountVip::where('UserID',$UserID)->join('Vips','Vips.VipID','=','AccountsVips.VipId')->orderBy('AccountsVips.AccountVipID','desc')->first();

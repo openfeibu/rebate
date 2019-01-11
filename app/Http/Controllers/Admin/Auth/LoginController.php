@@ -26,7 +26,7 @@ class LoginController extends Controller
 
     use RoutesAndGuards, ThemeAndViews, ValidatesRequests, AuthenticatesUsers;
 
-    protected $redirectTo = '/admin';
+    protected $redirectTo = '/admin/vip';
 
     /**
      * Create a new controller instance.
@@ -37,7 +37,7 @@ class LoginController extends Controller
     {
         parent::__construct();
         $this->response   = resolve(AuthResponse::class);
-        $this->setRedirectTo();
+        //$this->setRedirectTo();
         $this->middleware('guest:' . $this->getGuard(), ['except' => ['logout', 'verify', 'locked', 'sendVerification']]);
         $this->setTheme();
     }

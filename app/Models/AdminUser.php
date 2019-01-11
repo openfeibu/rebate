@@ -17,7 +17,7 @@ use App\Traits\AdminUser\AdminUser as AdminUserProfile;
 
 class AdminUser extends User implements AdminUserPolicy
 {
-    use Filer, Notifiable, HasRoleAndPermission, AdminUserProfile, SoftDeletes, Hashids, Slugger, PresentableTrait, DateFormatter;
+    use Filer, Notifiable, HasRoleAndPermission, AdminUserProfile, SoftDeletes, Hashids, Slugger, PresentableTrait;
 
     /**
      * Configuartion for the model.
@@ -25,6 +25,8 @@ class AdminUser extends User implements AdminUserPolicy
      * @var array
      */
     protected $config = 'model.user.admin.model';
+
+    protected $connection = 'sqlsrv';
 
     /**
      * Initialiaze page modal.

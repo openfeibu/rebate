@@ -2,11 +2,13 @@
     <div class="layui-card fb-minNav">
         <div class="layui-breadcrumb" lay-filter="breadcrumb" style="visibility: visible;">
             <a href="{{ route('home') }}">主页</a><span lay-separator="">/</span>
-            <a><cite>VIP设置</cite></a>
+            <a><cite>VIP升级记录</cite></a>
         </div>
     </div>
     <div class="main_full">
         <div class="layui-col-md12">
+            <div class="tabel-message">
+            </div>
 
             <table id="fb-table" class="layui-table"  lay-filter="fb-table">
 
@@ -17,25 +19,30 @@
 
 
 <script>
-    var main_url = "{{guard_url('vip')}}";
-    var delete_all_url = "{{guard_url('vip/destroyAll')}}";
-    var id = 'VipID';
+    var main_url = "{{guard_url('accounts_vips')}}";
+    var delete_all_url = "";
+    var id='AccountVipID';
     layui.use(['jquery','element','table'], function(){
-        var $ = layui.$;
         var table = layui.table;
         var form = layui.form;
+        var $ = layui.$;
         table.render({
             elem: '#fb-table'
             ,url: main_url
             ,cols: [[
-                {field:'VipID',title:'ID', width:80, sort: true}
-                ,{field:'VipName',title:'VIP', width:80, edit:'title'}
-                ,{field:'Detail',title:'详情',  edit:'title'}
-                ,{field:'Price',title:'升级价格', width:100,  edit:'title'}
+                {field:'AccountVipID',title:'ID', width:80}
+                ,{field:'UpgradeDate',title:'时间'}
+                ,{field:'Accounts',title:'昵称'}
+                ,{field:'VipName',title:'VIP'}
+                ,{field:'Price',title:'价格'}
             ]]
             ,id: 'fb-table'
+            ,page: true
+            ,limit: 10
             ,height: 'full-200'
         });
+
+
     });
 </script>
 {!! Theme::partial('common_handle_js') !!}

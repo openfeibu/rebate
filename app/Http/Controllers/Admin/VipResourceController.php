@@ -3,18 +3,26 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\ResourceController as BaseController;
-use App\Models\Link;
+use App\Models\Vip;
+use App\Models\AccountRebate;
+use App\Models\AccountVip;
 use Illuminate\Http\Request;
 use App\Repositories\Eloquent\VipRepositoryInterface;
+use App\Repositories\Eloquent\AccountRebateRepositoryInterface;
 
 class VipResourceController extends BaseController
 {
-    public function __construct(VipRepositoryInterface $vip_repository)
+    public function __construct(VipRepositoryInterface $vip_repository
+        //,AccountRebateRepositoryInterface $account_rebate_repository
+    )
     {
         parent::__construct();
         $this->repository = $vip_repository;
+        //$this->account_rebate_repository = $account_rebate_repository;
         $this->repository
             ->pushCriteria(\App\Repositories\Criteria\RequestCriteria::class);
+//        $this->account_rebate_repository
+//            ->pushCriteria(\App\Repositories\Criteria\RequestCriteria::class);
     }
     public function index(Request $request)
     {
@@ -22,6 +30,7 @@ class VipResourceController extends BaseController
             $data = $this->repository
                 ->orderBy('VipID','asc')
                 ->all();
+            $data = $data ? $data->toArray() : [];
             return $this->response
                 ->success()
                 ->data($data)
@@ -31,107 +40,76 @@ class VipResourceController extends BaseController
             ->view('vip.index')
             ->output();
     }
-    public function create(Request $request)
+
+    public function update(Request $request,Vip $vip)
     {
-        $link = $this->repository->newInstance([]);
+        try {
+            $attributes = $request->all();
+
+            $vip->update($attributes);
+
+            return $this->response->message(trans('messages.success.update', ['Module' => 'VIP']))
+                ->code(0)
+                ->status('success')
+                ->url(guard_url('vip/'))
+                ->redirect();
+        } catch (Exception $e) {
+            return $this->response->message($e->getMessage())
+                ->code(400)
+                ->status('error')
+                ->url(guard_url('vip/'))
+                ->redirect();
+        }
+    }
+    public function rebates(Request $request)
+    {
+        $limit = $request->input('limit',config('app.limit'));
+        $rebates = app(AccountRebate::class)
+            ->Join('AccountsInfo as AI','AI.UserID','=','AccountsRebates.FromUserID')
+            ->Join('AccountsInfo as AI2','AI2.UserID','=','AccountsRebates.UserID')
+            ->orderBy('RebateID','DESC')
+            ->select('AccountsRebates.*','AI.Accounts as FromAccounts','AI2.Accounts as Accounts')
+            ->paginate($limit);
+        if ($this->response->typeIs('json')) {
+            $data = $rebates ? $rebates->toArray()['data'] : [];
+            foreach ($data as $key => $val)
+            {
+                $data[$key]['RebateDetail'] = $val['Rank'] == 1 ? '（一级下线）' : '（二级下线）';
+                $data[$key]['RebateDetail'] = $val['FromAccounts'].$data[$key]['RebateDetail'];
+            }
+            return $this->response
+                ->success()
+                ->count($rebates['meta']['pagination']['recordsTotal'])
+                ->data($data)
+                ->output();
+        }
 
         return $this->response->title(trans('app.admin.panel'))
-            ->view('link.create')
-            ->data(compact('link'))
+            ->view('vip.rebates', true)
             ->output();
     }
-    public function store(Request $request)
+    public function accountsVips(Request $request)
     {
-        try {
-            $attributes = $request->all();
+        $limit = $request->input('limit',config('app.limit'));
+        $accounts_vips = app(AccountVip::class)
+            ->Join('AccountsInfo','AccountsInfo.UserID','=','AccountsVips.UserID')
+            ->Join('Vips','Vips.VipID','=','AccountsVips.VipID')
+            ->orderBy('AccountVipID','DESC')
+            ->select('AccountsVips.*','AccountsInfo.Accounts','Vips.VipName')
+            ->paginate($limit);
+        if ($this->response->typeIs('json')) {
+            $data = $accounts_vips ? $accounts_vips->toArray()['data'] : [];
 
-            $link = $this->repository->create($attributes);
-
-            return $this->response->message(trans('messages.success.created', ['Module' => trans('link.name')]))
-                ->code(0)
-                ->status('success')
-                ->url(guard_url('link/' . $link->id))
-                ->redirect();
-        } catch (Exception $e) {
-            return $this->response->message($e->getMessage())
-                ->code(400)
-                ->status('error')
-                ->url(guard_url('link'))
-                ->redirect();
-        }
-    }
-    public function show(Request $request,Link $link)
-    {
-        if ($link->exists) {
-            $view = 'link.show';
-        } else {
-            $view = 'link.create';
+            return $this->response
+                ->success()
+                ->count($accounts_vips['meta']['pagination']['recordsTotal'])
+                ->data($data)
+                ->output();
         }
 
-        return $this->response->title(trans('app.view') . ' ' . trans('link.name'))
-            ->data(compact('link'))
-            ->view($view)
+        return $this->response->title(trans('app.admin.panel'))
+            ->view('vip.accounts_vips', true)
             ->output();
     }
-    public function update(Request $request,Link $link)
-    {
-        try {
-            $attributes = $request->all();
 
-            $link->update($attributes);
-
-            return $this->response->message(trans('messages.success.created', ['Module' => trans('link.name')]))
-                ->code(0)
-                ->status('success')
-                ->url(guard_url('link/' . $link->id))
-                ->redirect();
-        } catch (Exception $e) {
-            return $this->response->message($e->getMessage())
-                ->code(400)
-                ->status('error')
-                ->url(guard_url('link/' . $link->id))
-                ->redirect();
-        }
-    }
-    public function destroy(Request $request,Link $link)
-    {
-        try {
-            $this->repository->forceDelete([$link->id]);
-
-            return $this->response->message(trans('messages.success.deleted', ['Module' => trans('link.name')]))
-                ->status("success")
-                ->code(202)
-                ->url(guard_url('link'))
-                ->redirect();
-
-        } catch (Exception $e) {
-
-            return $this->response->message($e->getMessage())
-                ->status("error")
-                ->code(400)
-                ->url(guard_url('link'))
-                ->redirect();
-        }
-    }
-    public function destroyAll(Request $request)
-    {
-        try {
-            $data = $request->all();
-            $ids = $data['ids'];
-            $this->repository->forceDelete($ids);
-
-            return $this->response->message(trans('messages.success.deleted', ['Module' => trans('link.name')]))
-                ->status("success")
-                ->code(202)
-                ->url(guard_url('link'))
-                ->redirect();
-
-        } catch (Exception $e) {
-            return $this->response->message($e->getMessage())
-                ->status("error")
-                ->code(400)
-                ->url(guard_url('link'))
-                ->redirect();
-        }
-    }
 }

@@ -21,8 +21,7 @@ Route::group([
     Route::get('password', 'UserController@getPassword');
     Route::post('password', 'UserController@postPassword');
 
-    Route::get('/', 'ResourceController@home')->name('home');
-    Route::get('/dashboard', 'ResourceController@dashboard')->name('dashboard');
+    Route::get('/', 'VipResourceController@index')->name('home');
 
     Route::resource('banner', 'BannerResourceController');
     Route::post('/banner/destroyAll', 'BannerResourceController@destroyAll');
@@ -38,6 +37,10 @@ Route::group([
 
     Route::resource('vip', 'VipResourceController');
     Route::post('/vip/destroyAll', 'VipResourceController@destroyAll');
+    Route::get('/rebates', 'VipResourceController@rebates')->name('vip.rebate.index');
+    Route::get('/accounts_vips', 'VipResourceController@accountsVips')->name('vip.accounts_vips');
+
+    Route::resource('vip_rebate', 'VipRebateResourceController');
 
     Route::resource('permission', 'PermissionResourceController');
     Route::resource('role', 'RoleResourceController');

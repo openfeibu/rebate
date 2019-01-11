@@ -17,7 +17,7 @@ return [
     'vip'     => [
         'model'        => 'App\Models\Vip',
         'table'        => 'Vips',
-        'primaryKey'   => 'id',
+        'primaryKey'   => 'VipID',
         'hidden'       => [],
         'visible'      => [],
         'guarded'      => ['*'],

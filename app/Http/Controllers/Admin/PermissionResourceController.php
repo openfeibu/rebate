@@ -146,7 +146,7 @@ class PermissionResourceController extends BaseController
     {
         try {
             $attributes = $request->all();
-            isset($attributes['name']) ? $attributes['name'] = trim($attributes['name'], chr(0xc2) . chr(0xa0)) : '';
+          //  isset($attributes['name']) ? $attributes['name'] = trim($attributes['name'], chr(0xc2) . chr(0xa0)) : '';
             $permission->update($attributes);
             return $this->response->message(trans('messages.success.updated', ['Module' => trans('permission.name')]))
                 ->code(0)

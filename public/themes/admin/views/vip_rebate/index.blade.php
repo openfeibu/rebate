@@ -2,7 +2,7 @@
     <div class="layui-card fb-minNav">
         <div class="layui-breadcrumb" lay-filter="breadcrumb" style="visibility: visible;">
             <a href="{{ route('home') }}">主页</a><span lay-separator="">/</span>
-            <a><cite>VIP设置</cite></a>
+            <a><cite>VIP返佣设置</cite></a>
         </div>
     </div>
     <div class="main_full">
@@ -17,9 +17,9 @@
 
 
 <script>
-    var main_url = "{{guard_url('vip')}}";
-    var delete_all_url = "{{guard_url('vip/destroyAll')}}";
-    var id = 'VipID';
+    var main_url = "{{guard_url('vip_rebate')}}";
+    var delete_all_url = "";
+    var id = 'VipRebateID';
     layui.use(['jquery','element','table'], function(){
         var $ = layui.$;
         var table = layui.table;
@@ -28,10 +28,10 @@
             elem: '#fb-table'
             ,url: main_url
             ,cols: [[
-                {field:'VipID',title:'ID', width:80, sort: true}
-                ,{field:'VipName',title:'VIP', width:80, edit:'title'}
-                ,{field:'Detail',title:'详情',  edit:'title'}
-                ,{field:'Price',title:'升级价格', width:100,  edit:'title'}
+                {field:'VipRebateID',title:'ID', width:80, sort: true}
+                ,{field:'VipName',title:'VIP'}
+                ,{field:'Rank',title:'几级返佣'}
+                ,{field:'Ratio',title:'比例（1～100）',  edit:'title'}
             ]]
             ,id: 'fb-table'
             ,height: 'full-200'

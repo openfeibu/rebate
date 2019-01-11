@@ -97,7 +97,16 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
         ],
-
+        'sqlsrv_agent' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_AGENT', 'localhost'),
+            'port' => env('DB_PORT_AGENT', '1433'),
+            'database' => env('DB_DATABASE_AGENT', 'forge'),
+            'username' => env('DB_USERNAME_AGENT', 'forge'),
+            'password' => env('DB_PASSWORD_AGENT', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+        ],
     ],
 
     /*

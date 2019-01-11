@@ -68,6 +68,15 @@ class AppServiceProvider extends ServiceProvider
             'App\Repositories\Eloquent\VipRepositoryInterface',
             \App\Repositories\Eloquent\VipRepository::class
         );
+        $this->app->bind(
+            'App\Repositories\Eloquent\VipRebateRepositoryInterface',
+            \App\Repositories\Eloquent\VipRebateRepository::class
+        );
+        $this->app->bind(
+            'App\Repositories\Eloquent\AccountRebateRepositoryInterface',
+            \App\Repositories\Eloquent\AccountRebateRepository::class
+        );
+
         $this->app->bind('filer', function ($app) {
             return new \App\Helpers\Filer\Filer();
         });

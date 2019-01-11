@@ -9,6 +9,7 @@ use App\Traits\Theme\ThemeAndViews;
 use App\Traits\RoutesAndGuards;
 use App\Models\Vip;
 use App\Models\ShareDetailInfo;
+use App\Models\TOffLineOrder;
 use App\Models\Account;
 use App\Models\AccountVip;
 use Illuminate\Http\Request;
@@ -60,6 +61,7 @@ class VipController extends BaseController
                 ->redirect();
         }
         $account_vip = app(Account::class)->userVip();
+        $account_vip_price_total = app(Account::class)->userVipPriceTotal();
         if($account_vip)
         {
             if($account_vip->VipID == $vip->VipID)
@@ -79,25 +81,22 @@ class VipController extends BaseController
                     ->redirect();
             }
         }
-        $last_share_detail_info = ShareDetailInfo::orderBy('DetailID','desc')->first();
-        if(!$last_share_detail_info)
+        $share_detail_info_score_total = ShareDetailInfo::where('UserID',Auth::user()->UserID)->sum('Currency');
+        $t_off_line_order_score_total = TOffLineOrder::where('UserID',Auth::user()->UserID)->sum('PayAmount');
+
+        $score_total = $t_off_line_order_score_total+$share_detail_info_score_total;
+
+        if($score_total-$account_vip_price_total < $vip->Price)
         {
-            return $this->response->message('请先充值')
-                ->status("error")
-                ->code(400)
-                ->url(url('/vip'))
-                ->redirect();
-        }
-        $currency = $last_share_detail_info->Currency;
-        if($currency < $vip->Price)
-        {
-            return $this->response->message('需至少充值'.$vip->Price.'元')
+            $need_topup = $vip->Price-($score_total-$account_vip_price_total);
+            return $this->response->message('需至少充值'.$vip->Price.'元，您还需充值'.$need_topup.'元')
                 ->status("error")
                 ->code(400)
                 ->url(url('/vip'))
                 ->redirect();
         }
         $insureScore = app(Account::class)->userInsureScore();
+        var_dump($insureScore);exit;
         if($insureScore < $vip->Price)
         {
             return $this->response->message('账户不足'.$vip->Price.'元')
@@ -112,7 +111,7 @@ class VipController extends BaseController
             'UserID' => Auth::user()->UserID,
             'UpgradeType' => 'account',
             'UpgradeDate' => date('Y-m-d H:i:s'),
-            'DetailID' => $last_share_detail_info->DetailID,
+            'Price' => $vip->Price,
         ]);
 
         return $this->response->message('恭喜您升级成功！')
