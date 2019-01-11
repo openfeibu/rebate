@@ -15,6 +15,7 @@ class UserController extends BaseController
 
     public function __construct()
     {
+        parent::__construct();
         if (!empty(app('auth')->getDefaultDriver())) {
             $this->middleware('auth:' . app('auth')->getDefaultDriver());
         }
