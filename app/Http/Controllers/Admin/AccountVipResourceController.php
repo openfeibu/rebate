@@ -88,7 +88,7 @@ class AccountVipResourceController extends BaseController
             $data = $account_vips_arr;
             return $this->response
                 ->success()
-                ->count($account_vips['meta']['pagination']['recordsTotal'])
+                ->count($account_vips->total())
                 ->data($data)
                 ->output();
         }

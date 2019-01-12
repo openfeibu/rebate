@@ -92,7 +92,7 @@ class VipResourceController extends BaseController
             }
             return $this->response
                 ->success()
-                ->count($rebates['meta']['pagination']['recordsTotal'])
+                ->count($rebates->total())
                 ->data($data)
                 ->output();
         }
@@ -124,7 +124,7 @@ class VipResourceController extends BaseController
 
             return $this->response
                 ->success()
-                ->count($accounts_vips['meta']['pagination']['recordsTotal'])
+                ->count($accounts_vips->total())
                 ->data($data)
                 ->output();
         }
