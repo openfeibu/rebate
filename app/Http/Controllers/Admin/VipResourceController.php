@@ -64,12 +64,25 @@ class VipResourceController extends BaseController
     public function rebates(Request $request)
     {
         $limit = $request->input('limit',config('app.limit'));
+        $searchs = $request->input('search',[]);
+
         $rebates = app(AccountRebate::class)
             ->Join('AccountsInfo as AI','AI.UserID','=','AccountsRebates.FromUserID')
-            ->Join('AccountsInfo as AI2','AI2.UserID','=','AccountsRebates.UserID')
+            ->Join('AccountsInfo as AI2','AI2.UserID','=','AccountsRebates.UserID');
+        if ($searchs) {
+            foreach ($searchs as $search_key => $search_value)
+            {
+                $rebates = $rebates->where(function ($rebates) use($search_key,$search_value) {
+                    $rebates->where('AI.'.$search_key, 'like', '%' . $search_value . '%');
+                    $rebates->orWhere('AI2.'.$search_key, 'like', '%' . $search_value . '%');
+                });
+            }
+        }
+        $rebates = $rebates
             ->orderBy('RebateID','DESC')
             ->select('AccountsRebates.*','AI.Accounts as FromAccounts','AI2.Accounts as Accounts')
             ->paginate($limit);
+
         if ($this->response->typeIs('json')) {
             $data = $rebates ? $rebates->toArray()['data'] : [];
             foreach ($data as $key => $val)
@@ -91,10 +104,19 @@ class VipResourceController extends BaseController
     public function accountsVips(Request $request)
     {
         $limit = $request->input('limit',config('app.limit'));
+        $searchs = $request->input('search',[]);
         $accounts_vips = app(AccountVip::class)
             ->Join('AccountsInfo','AccountsInfo.UserID','=','AccountsVips.UserID')
-            ->Join('Vips','Vips.VipID','=','AccountsVips.VipID')
-            ->orderBy('AccountVipID','DESC')
+            ->Join('Vips','Vips.VipID','=','AccountsVips.VipID');
+        if ($searchs) {
+            foreach ($searchs as $search_key => $search_value)
+            {
+                $accounts_vips = $accounts_vips->where(function ($accounts_vips) use($search_key,$search_value) {
+                    $accounts_vips->where('AccountsInfo.'.$search_key, 'like', '%' . $search_value . '%');
+                });
+            }
+        }
+        $accounts_vips=$accounts_vips->orderBy('AccountVipID','DESC')
             ->select('AccountsVips.*','AccountsInfo.Accounts','Vips.VipName')
             ->paginate($limit);
         if ($this->response->typeIs('json')) {

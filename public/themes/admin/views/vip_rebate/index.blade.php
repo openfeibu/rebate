@@ -7,7 +7,6 @@
     </div>
     <div class="main_full">
         <div class="layui-col-md12">
-
             <table id="fb-table" class="layui-table"  lay-filter="fb-table">
 
             </table>

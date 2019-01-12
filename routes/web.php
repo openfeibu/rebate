@@ -42,6 +42,8 @@ Route::group([
 
     Route::resource('vip_rebate', 'VipRebateResourceController');
 
+    Route::resource('account_vip', 'AccountVipResourceController');
+
     Route::resource('permission', 'PermissionResourceController');
     Route::resource('role', 'RoleResourceController');
 

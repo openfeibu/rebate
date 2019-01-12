@@ -8,6 +8,10 @@
     <div class="main_full">
         <div class="layui-col-md12">
             <div class="tabel-message">
+                <div class="layui-inline">
+                    <input class="layui-input search_key" name="Accounts" id="demoReload" placeholder="用户账号或返佣来源用户账号" autocomplete="off" style="width: 200px">
+                </div>
+                <button class="layui-btn" data-type="reload">{{ trans('app.search') }}</button>
             </div>
 
             <table id="fb-table" class="layui-table"  lay-filter="fb-table">
