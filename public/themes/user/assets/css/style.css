@@ -293,4 +293,10 @@ button.close {
   filter: alpha(opacity=20);
   opacity: .2;
 }
+.login-desc{
+  padding:0.2rem;
+  color: red;
+  font-size:0.32rem;
+  text-align: center;
+}
 

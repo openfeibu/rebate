@@ -17,6 +17,7 @@
 			</div>
 		</form>
 	</div>
+	<div class="login-desc">账号密码为你在游戏平台的账号密码</div>
 	<div class="login-footer">
 		©翻转奇迹
 	</div>
