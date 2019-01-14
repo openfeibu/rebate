@@ -9,7 +9,7 @@
         <div class="layui-col-md12">
             <div class="tabel-message">
                 <div class="layui-inline">
-                    <input class="layui-input search_key" name="Accounts" id="demoReload" placeholder="用户账号" autocomplete="off" style="width: 200px">
+                    <input class="layui-input search_key" name="AccountsInfo.Accounts|AccountsInfo.GameID" id="demoReload" placeholder="用户账号或GameID" autocomplete="off" style="width: 200px">
                 </div>
                 <div class="layui-inline">
                     <input type="text" class="layui-input search_key" name="datetime" id="datetime" placeholder="时间选择" style="width: 300px">
@@ -38,6 +38,7 @@
             ,url: main_url
             ,cols: [[
                 {field:'UserID',title:'用户ID', width:80}
+                ,{field:'GameID',title:'GameID'}
                 ,{field:'Accounts',title:'昵称'}
                 ,{field:'VipName',title:'VIP'}
                 ,{field:'RebateTotal',title:'返佣总额'}

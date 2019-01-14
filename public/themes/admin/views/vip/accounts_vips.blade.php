@@ -9,7 +9,7 @@
         <div class="layui-col-md12">
             <div class="tabel-message">
                 <div class="layui-inline">
-                    <input class="layui-input search_key" name="Accounts" id="demoReload" placeholder="用户账号" autocomplete="off" style="width: 200px">
+                    <input class="layui-input search_key" name="AI.Accounts|AI.GameID" id="demoReload" placeholder="用户账号或GameID" autocomplete="off" style="width: 300px">
                 </div>
                 <button class="layui-btn" data-type="reload">{{ trans('app.search') }}</button>
             </div>
@@ -36,6 +36,7 @@
             ,cols: [[
                 {field:'AccountVipID',title:'ID', width:80}
                 ,{field:'UpgradeDate',title:'时间'}
+                ,{field:'GameID',title:'GameID'}
                 ,{field:'Accounts',title:'昵称'}
                 ,{field:'VipName',title:'VIP'}
                 ,{field:'Price',title:'价格'}

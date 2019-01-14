@@ -72,15 +72,29 @@ class VipResourceController extends BaseController
         if ($searchs) {
             foreach ($searchs as $search_key => $search_value)
             {
-                $rebates = $rebates->where(function ($rebates) use($search_key,$search_value) {
-                    $rebates->where('AI.'.$search_key, 'like', '%' . $search_value . '%');
-                    $rebates->orWhere('AI2.'.$search_key, 'like', '%' . $search_value . '%');
-                });
+                if($search_value)
+                {
+                    if(strstr($search_key,'|'))
+                    {
+                        $search_key_arr = explode('|',$search_key);
+                        $rebates = $rebates->where(function ($rebates) use($search_key_arr,$search_value) {
+                            foreach ($search_key_arr as $search_key_val) {
+                                $rebates = $rebates->orWhere(function ($rebates) use($search_key_val,$search_value) {
+                                    $rebates->where($search_key_val, 'like', '%' . $search_value . '%');
+                                });
+                            }
+                        });
+                    }else{
+                        $rebates = $rebates->where(function ($rebates) use($search_key,$search_value) {
+                            $rebates->where($search_key, 'like', '%' . $search_value . '%');
+                        });
+                    }
+                }
             }
         }
         $rebates = $rebates
             ->orderBy('RebateID','DESC')
-            ->select('AccountsRebates.*','AI.Accounts as FromAccounts','AI2.Accounts as Accounts')
+            ->select('AccountsRebates.*','AI.Accounts as FromAccounts','AI2.Accounts as Accounts','AI.GameID as FromGameID','AI2.GameID as GameID')
             ->paginate($limit);
 
         if ($this->response->typeIs('json')) {
@@ -88,7 +102,8 @@ class VipResourceController extends BaseController
             foreach ($data as $key => $val)
             {
                 $data[$key]['RebateDetail'] = $val['Rank'] == 1 ? '（一级下线）' : '（二级下线）';
-                $data[$key]['RebateDetail'] = $val['FromAccounts'].$data[$key]['RebateDetail'];
+                $data[$key]['RebateDetail'] = $val['FromAccounts'].$data[$key]['RebateDetail'].'('.$val['FromGameID'].')';
+                $data[$key]['AccountsDetail'] = $val['Accounts'] .'('.$val['GameID'].')';
             }
             return $this->response
                 ->success()
@@ -106,18 +121,26 @@ class VipResourceController extends BaseController
         $limit = $request->input('limit',config('app.limit'));
         $searchs = $request->input('search',[]);
         $accounts_vips = app(AccountVip::class)
-            ->Join('AccountsInfo','AccountsInfo.UserID','=','AccountsVips.UserID')
+            ->Join('AccountsInfo AS AI','AI.UserID','=','AccountsVips.UserID')
             ->Join('Vips','Vips.VipID','=','AccountsVips.VipID');
         if ($searchs) {
             foreach ($searchs as $search_key => $search_value)
             {
-                $accounts_vips = $accounts_vips->where(function ($accounts_vips) use($search_key,$search_value) {
-                    $accounts_vips->where('AccountsInfo.'.$search_key, 'like', '%' . $search_value . '%');
-                });
+                if(strstr($search_key,'|'))
+                {
+                    $search_key_arr = explode('|',$search_key);
+                    $accounts_vips = $accounts_vips->where(function ($accounts_vips) use($search_key_arr,$search_value) {
+                        foreach ($search_key_arr as $search_key_val) {
+                            $accounts_vips = $accounts_vips->orWhere(function ($accounts_vips) use($search_key_val,$search_value) {
+                                $accounts_vips->where($search_key_val, 'like', '%' . $search_value . '%');
+                            });
+                        }
+                    });
+                }
             }
         }
         $accounts_vips=$accounts_vips->orderBy('AccountVipID','DESC')
-            ->select('AccountsVips.*','AccountsInfo.Accounts','Vips.VipName')
+            ->select('AccountsVips.*','AI.Accounts','AI.GameID','Vips.VipName')
             ->paginate($limit);
         if ($this->response->typeIs('json')) {
             $data = $accounts_vips ? $accounts_vips->toArray()['data'] : [];

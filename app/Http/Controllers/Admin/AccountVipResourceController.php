@@ -21,6 +21,7 @@ class AccountVipResourceController extends BaseController
     {
         $limit = $request->input('limit',config('app.limit'));
         $searchs = $request->input('search',[]);
+
         if ($this->response->typeIs('json')) {
             $account_vips =  app(Account::class)
                 ->Join('AccountsVips as AV', 'AV.UserID', '=', 'AccountsInfo.UserID')
@@ -29,6 +30,33 @@ class AccountVipResourceController extends BaseController
             if ($searchs) {
                 foreach ($searchs as $search_key => $search_value)
                 {
+                    if($search_value)
+                    {
+                        if($search_key == 'datetime')
+                        {
+                            $account_vips = $account_vips->where(function ($account_vips) use($search_key,$search_value) {
+                                $datetime = explode(' ~ ',$search_value);
+                                $starttime = $datetime[0];
+                                $endtime = $datetime[1];
+                                $account_vips->where('AR.RebateDate', '>=', $starttime);
+                                $account_vips->where('AR.RebateDate', '<=', $endtime);
+                            });
+                        }
+                        else if(strstr($search_key,'|'))
+                        {
+                            $search_key_arr = explode('|',$search_key);
+
+                            $account_vips = $account_vips->where(function ($account_vips) use($search_key_arr,$search_value) {
+                                foreach ($search_key_arr as $search_key_val) {
+                                    $account_vips = $account_vips->orWhere(function ($account_vips) use($search_key_val,$search_value) {
+                                        $account_vips->where($search_key_val, 'like', '%' . $search_value . '%');
+                                    });
+                                }
+                            });
+                        }
+                    }
+
+                    /*
                     $account_vips = $account_vips->where(function ($account_vips) use($search_key,$search_value) {
                         if($search_value)
                         {
@@ -44,36 +72,49 @@ class AccountVipResourceController extends BaseController
                             }
                         }
                     });
+                    */
                 }
             }
-            $account_vips=$account_vips->selectRaw('AccountsInfo.UserID,AccountsInfo.Accounts,MAX(AV.VipID) as VipID,SUM(AR.Rebate) as RebateTotal')
+            $account_vips=$account_vips->selectRaw('AccountsInfo.UserID,AccountsInfo.GameID,AccountsInfo.Accounts,MAX(AV.VipID) as VipID,SUM(AR.Rebate) as RebateTotal')
                 ->groupBy('AccountsInfo.UserID')
+                ->groupBy('AccountsInfo.GameID')
                 //->groupBy('V.VipName')
                 ->groupBy('AccountsInfo.Accounts')
                 ->orderBy('RebateTotal','desc')
                 ->orderBy('UserID','desc')
                 ->paginate($limit);
             $rebate_total = app(AccountRebate::class)
-                ->Join('AccountsInfo as AI','AI.UserID','=','AccountsRebates.UserID');
+                ->Join('AccountsInfo','AccountsInfo.UserID','=','AccountsRebates.UserID');
 
             if ($searchs) {
                 foreach ($searchs as $search_key => $search_value)
                 {
-                    $rebate_total = $rebate_total->where(function ($rebate_total) use($search_key,$search_value) {
-                        if($search_value)
+                    if($search_value)
+                    {
+                        if($search_key == 'datetime')
                         {
-                            if($search_key == 'datetime')
-                            {
+                            $rebate_total = $rebate_total->where(function ($rebate_total) use($search_key,$search_value) {
                                 $datetime = explode(' ~ ',$search_value);
                                 $starttime = $datetime[0];
                                 $endtime = $datetime[1];
                                 $rebate_total->where('AccountsRebates.RebateDate', '>=', $starttime);
                                 $rebate_total->where('AccountsRebates.RebateDate', '<=', $endtime);
-                            }else{
-                                $rebate_total->where('AI.'.$search_key, 'like', '%' . $search_value . '%');
-                            }
+                            });
                         }
-                    });
+                        else if(strstr($search_key,'|'))
+                        {
+                            $search_key_arr = explode('|',$search_key);
+
+                            $rebate_total = $rebate_total->where(function ($rebate_total) use($search_key_arr,$search_value) {
+                                foreach ($search_key_arr as $search_key_val) {
+                                    $rebate_total = $rebate_total->orWhere(function ($rebate_total) use($search_key_val,$search_value) {
+                                        $rebate_total->where($search_key_val, 'like', '%' . $search_value . '%');
+                                    });
+                                }
+                            });
+                        }
+                    }
+
                 }
             }
             $rebate_total = $rebate_total->sum('AccountsRebates.Rebate');

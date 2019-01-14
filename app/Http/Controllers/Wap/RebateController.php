@@ -30,7 +30,7 @@ class RebateController extends BaseController
         $rebates = AccountRebate::where('AccountsRebates.UserID',Auth::user()->UserID)
             ->Join('AccountsInfo','AccountsInfo.UserID','=','AccountsRebates.FromUserID')
             ->orderBy('RebateID','DESC')
-            ->select('AccountsRebates.*','AccountsInfo.Accounts as FromAccounts')
+            ->select('AccountsRebates.*','AccountsInfo.Accounts as FromAccounts','AccountsInfo.GameID as FromGameID')
             ->paginate('10');
 
         if ($this->response->typeIs('json')) {

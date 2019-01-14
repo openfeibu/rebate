@@ -9,7 +9,10 @@
         <div class="layui-col-md12">
             <div class="tabel-message">
                 <div class="layui-inline">
-                    <input class="layui-input search_key" name="Accounts" id="demoReload" placeholder="用户账号或返佣来源用户账号" autocomplete="off" style="width: 200px">
+                    <input class="layui-input search_key" name="AI2.Accounts|AI2.GameID" id="demoReload" placeholder="用户账号或GameID" autocomplete="off" style="width: 300px">
+                </div>
+                <div class="layui-inline">
+                    <input class="layui-input search_key" name="AI.Accounts|AI.GameID" id="demoReload" placeholder="返佣来源用户账号或GameID" autocomplete="off" style="width: 300px">
                 </div>
                 <button class="layui-btn" data-type="reload">{{ trans('app.search') }}</button>
             </div>
@@ -36,10 +39,10 @@
             ,cols: [[
                 {field:'RebateID',title:'ID', width:80}
                 ,{field:'RebateDate',title:'时间'}
-                ,{field:'Accounts',title:'用户'}
-                ,{field:'RebateDetail',title:'返佣来源用户'}
-                ,{field:'Currency',title:'金额'}
-                ,{field:'Rebate',title:'返佣'}
+                ,{field:'AccountsDetail',title:'用户(GameID)'}
+                ,{field:'RebateDetail',title:'返佣来源用户(GameID)'}
+                ,{field:'Currency',title:'金额',width:160}
+                ,{field:'Rebate',title:'返佣',width:160}
             ]]
             ,id: 'fb-table'
             ,page: true
