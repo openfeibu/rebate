@@ -53,6 +53,9 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
+
+    'admin_rul' => env('APP_ADMIN_URL', 'http://localhost'),
+
     'image_url' => 'https://api.feibu.app',
     /*
     |--------------------------------------------------------------------------

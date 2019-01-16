@@ -15,6 +15,7 @@
 // Admin  routes  for user
 Route::group([
     'namespace' => 'Admin',
+    'domain' => config('app.admin_url'),
     'prefix' => 'admin'
 ], function () {
     Auth::routes();
@@ -68,6 +69,7 @@ Route::group([
 
 Route::group([
     'namespace' => 'Wap',
+    'domain' => config('app.url'),
 ], function () {
     Route::get('user/login', 'Auth\LoginController@showLoginForm');
     Route::post('user/login', 'Auth\LoginController@login');

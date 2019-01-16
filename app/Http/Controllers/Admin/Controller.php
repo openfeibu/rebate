@@ -22,6 +22,6 @@ class Controller extends BaseController
 
     public function __construct()
     {
-        set_route_guard('web');
+        set_route_guard('web','admin');
     }
 }
